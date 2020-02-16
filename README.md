@@ -13,7 +13,7 @@
 ### Setup
   - Modify eve-ng.tf file substituting variables for droplet and domain
   - Create a file called vars.yml with new root password.
-    - `touch vars.yml && echo "new_root_pass: "SuperSecretPassword1!""`
+    - `touch vars.yml && echo "new_root_pass: "SuperSecretPassword1!" > vars.yml"`
   - Modify ansible.cfg lines:
     - privatekeyfile
     - publickeyfile
