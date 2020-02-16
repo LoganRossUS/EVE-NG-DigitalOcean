@@ -1,0 +1,62 @@
+---
+- hosts: all
+  any_errors_fatal: true
+  become: true
+  become_user: root
+
+  tasks:
+    - name: include vars file
+      include_vars: vars.yml
+
+    - name: update root password
+      user:
+        name: root
+        password: "{{ new_root_pass }}"
+    
+    - name: Remove Cloud init
+      apt:
+        name: cloud-init
+        state: absent
+    
+    - name: Set Hostname info
+      shell: |
+        echo "eve-ng" > /etc/hostname
+        sed -i '/127.0.0.1 localhost/i127.0.0.1 eve-ng.test.com eve-ng' /etc/hosts
+        sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="/&net.ifnames=0 noquiet /' /etc/default/grub
+        update-grub
+    
+    - name: Reboot immediately if there was a change.
+      shell: "sleep 5 && reboot"
+      async: 1
+      poll: 0
+
+    - name: Wait for the reboot to complete if there was a change.
+      wait_for_connection:
+        connect_timeout: 20
+        sleep: 5
+        delay: 5
+        timeout: 300
+    
+    - name: Add eve-ng repo and install
+      shell: |
+        wget -O - http://www.eve-ng.net/repo/eczema@ecze.com.gpg.key | apt-key add - # Blergh
+        apt-add-repository "deb [arch=amd64] http://www.eve-ng.net/repo xenial main"
+        apt-get update
+        DEBIAN_FRONTEND=noninteractive apt-get install -y eve-ng
+      ignore_errors: True
+  
+    - name: update
+      apt:
+        name: "*"
+        state: fixed
+      ignore_errors: True
+    
+    - name: Upgrade
+      apt:
+        name: "*"
+        state: latest
+      ignore_errors: True
+    
+    - name: Finish eve-ng install
+      shell: |
+        yes '' | apt-get install eve-ng
