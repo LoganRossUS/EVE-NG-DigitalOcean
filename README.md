@@ -6,8 +6,8 @@
 
 ### Prerequisites
   - Modify /etc/environment with the following...
-    - DO_PAT=<your digitalocean personal access token.>
-    - DO_FP=<your digitalocean allowed ssh key fingerprint>
+    - DO_PAT=your digitalocean personal access token.
+    - DO_FP=your:digitalocean:allowed:ssh:key:fingerprint
     - ANSIBLE_HOST_KEY_CHECKING=False
 
 ### Setup
