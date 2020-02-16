@@ -11,7 +11,6 @@ resource "digitalocean_droplet" "eve-ng" {
 resource "digitalocean_domain" "eve-ng" {
   name       = "eve-ng.loganross.us"
   ip_address = "${digitalocean_droplet.eve-ng.ipv4_address}"
-  ttl        = "300"
 }
 resource "digitalocean_project" "eve-ng" {
   name        = "eve-ng"
